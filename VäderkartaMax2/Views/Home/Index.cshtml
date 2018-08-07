@@ -1,0 +1,89 @@
+﻿
+<title>jVectorMap demo</title>
+<link rel="stylesheet" href="~/Scripts/jquery-jvectormap-2.0.3/jquery-jvectormap-2.0.3.css" type="text/css" media="screen" />
+
+    <div id="world-map" style="width: 100%; height: 100vh"></div>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h1 class="modal-title" id="exampleModalLabel" style="text-align:center; font-weight:bold"></h1>
+            </div>
+            <div class="modal-body">
+
+            </div>
+            <div id="icon"><img id="wicon" src="" alt="Weather icon"></div>
+            <div class="modal-footer">
+                <select name="drop_down" id="dropDownCars" style="float:left">
+                    <option value="None" selected="Selected">Select other country</option>
+                </select>
+                <button type="button" class="btn btn-primary">More information</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/Scripts/jquery-jvectormap-2.0.3/jquery-jvectormap-2.0.3.min.js")
+    @Scripts.Render("~/Scripts/jquery-jvectormap-2.0.3/jquery-jvectormap-world-mill.js")
+    <script>
+        $(function () {
+            $('#world-map').vectorMap({
+                map: 'world_mill',
+                onRegionClick: function (event, code) {
+                    var map = $('#world-map').vectorMap('get', 'mapObject');
+                    var name = map.getRegionName(code);
+                    var apiKey = 'fe34f1dcaebdaf3204c2e53a4c865fb6'
+                    //console.log(code);
+                    //console.log(name);
+                    $('#exampleModal').modal('toggle');
+                    $('.modal-body').empty();
+                    //$('.modal-body').append('<p> Country: ' + name + '</p>')
+                    $('#exampleModalLabel').text(name);
+
+                    $.getJSON('https://restcountries.eu/rest/v2/alpha/' + code, function (data) {
+                        //console.log(data);
+                        $('.modal-body').append('<p> Capital: ' + data.capital + '</p>')
+                    }).then(function (data) {
+
+                        $.getJSON('https://api.openweathermap.org/data/2.5/find?q=' + data.capital + '&units=metric&APPID=' + apiKey, function (response) {
+                            console.log(response);
+                            var iconcode = response.list["0"].weather["0"].icon;
+                            var iconurl = "http://openweathermap.org/img/w/" + iconcode + ".png";
+                            $('#wicon').attr('src', iconurl);
+                            $('.modal-body').append('<p> Weather: ' + response.list["0"].weather["0"].main + '</p>')
+                            $('.modal-body').append('<p> Temperature: ' + response.list["0"].main.temp + '</p>')
+                        });
+
+                    }).then(function (data) {
+
+                        $.getJSON('https://restcountries.eu/rest/v2/all', function (response) {
+
+                            //console.log("allcountries", response);
+                            console.log(response.name);
+                            $.each(response, function (key, value) {
+
+                                $("#dropDownCars").append("<option>" + value.name + "</option>");
+                            });
+
+                            $('select[name="drop_down"]').change(function () {
+
+                                
+                            })
+                        });
+
+
+                    });
+
+                },
+
+            });
+        });
+    </script>
+}
