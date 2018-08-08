@@ -1,0 +1,90 @@
+﻿
+
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Info</title>
+</head>
+<body style="background-color:cadetblue">
+    <h1 id="Country">@ViewBag.Country</h1>
+    <p id="Capital">Capital: </p>
+    <p id="Info">Info: </p>
+    <p>Flag: <div id="icon" style="width:300px; height:250px;"><img style="width:300px; height:250px;" id="flag" src="" alt="flag icon"></div> </p>
+    <img id="wIcon" src="" alt="weather icon" />
+    <p id="cWeather"> Current weather: </p> 
+    <p>5day forecast: </p>
+    <div id="test"></div>
+</body>
+
+@section Scripts {
+    @Scripts.Render("~/Scripts/jquery-jvectormap-2.0.3/jquery-jvectormap-2.0.3.min.js")
+    @Scripts.Render("~/Scripts/jquery-jvectormap-2.0.3/jquery-jvectormap-world-mill.js")
+    <script>
+
+        $(function () {
+
+            var country = '@(ViewBag.Country)';
+            var apiKey = 'fe34f1dcaebdaf3204c2e53a4c865fb6'
+            var capital = "";
+
+            var weatherbitApiKey = '2035d3aefc17412891b68c1330c6bbb5';
+
+            var apixuApiKey = '01b71d91de8046a597d123250180808';
+
+            $.getJSON('https://restcountries.eu/rest/v2/name/' + country + '?fullText=true', function (data) {
+
+
+
+                capital = data["0"].capital;
+                $('#Capital').text("Capital: " + capital);
+
+                var flagUrl = data["0"].flag
+
+                $('#flag').attr('src', flagUrl);
+
+
+
+
+
+
+
+                console.log(data, capital);
+            }).then(function (data) {
+
+                $.getJSON('https://en.wikipedia.org/api/rest_v1/page/summary/' + capital, function (response) {
+
+                    //console.log(response);
+                    $('#Info').text(response.extract);
+
+
+                });
+
+                $.getJSON('https://api.openweathermap.org/data/2.5/find?q=' + capital + '&units=metric&APPID=' + apiKey, function (test) {
+                    //console.log(response);
+                    var iconcode = test.list["0"].weather["0"].icon;
+                    var iconurl = "http://openweathermap.org/img/w/" + iconcode + ".png";
+                    $('#wIcon').attr('src', iconurl);
+                    $('#cWeather').text("Current weather: " + test.list["0"].weather["0"].main + " and temperature: " + test.list["0"].main.temp + "°C");
+
+                });
+
+                $.getJSON('https://api.openweathermap.org/data/2.5/forecast?q=' + capital + '&units=metric&APPID=' + apiKey, function (svar) {
+                    console.log(svar);
+
+
+                   
+
+                });
+
+
+
+
+
+
+
+
+            });
+            //console.log("the country is: ", country);
+        });
+
+    </script>
+}

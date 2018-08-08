@@ -13,6 +13,11 @@ namespace VäderkartaMax2.Controllers
             return View();
         }
 
+        public ActionResult Info(string submitCountry)
+        {
+            ViewBag.Country = submitCountry;
+            return View();
+        }
         public ActionResult About()
         {
             ViewBag.Message = "Your application description page.";

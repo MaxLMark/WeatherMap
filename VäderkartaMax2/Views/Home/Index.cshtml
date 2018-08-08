@@ -23,7 +23,9 @@
                 <select name="drop_down" id="dropDownCars" style="float:left; margin-left:10px; max-width:100px;">
                     <option value="None" selected="Selected"></option>
                 </select>
-                <button type="button" class="btn btn-primary">More information</button>
+                <form action="Home/Info" method="POST">
+                    <button type="submit" id="countrySubmit" name="submitCountry" value="" class="btn btn-primary">More information</button>
+                </form>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </div>
         </div>
@@ -41,13 +43,15 @@
                     var map = $('#world-map').vectorMap('get', 'mapObject');
                     var name = map.getRegionName(code);
                     var apiKey = 'fe34f1dcaebdaf3204c2e53a4c865fb6'
+                    $('select[name="drop_down"]').val('none');
+                    $('submit[name="submitCountry"]').val(name);
                     //console.log(code);
                     //console.log(name);
                     $('#exampleModal').modal('toggle');
                     $('.modal-body').empty();
                     //$('.modal-body').append('<p> Country: ' + name + '</p>')
                     $('#exampleModalLabel').text(name);
-
+                    $('#countrySubmit').val(name);
                     $.getJSON('https://restcountries.eu/rest/v2/alpha/' + code, function (data) {
                         //console.log(data);
                         $('.modal-body').append('<p id="capital"> Capital: ' + data.capital + '</p>')
@@ -76,6 +80,9 @@
                             $('select[name="drop_down"]').change(function () {
                                 var selectedName = $(this).val();
                                 //console.log(selectedName);
+                                $('#exampleModalLabel').text(selectedName);
+                                $('#countrySubmit').val(selectedName);
+                                //$(this).val('none')
                                 $.getJSON('https://restcountries.eu/rest/v2/name/' + selectedName + '?fullText=true', function (data) {
 
                                     console.log(data);
@@ -95,12 +102,8 @@
                                 });
                             });
                         });
-
-
                     });
-
                 },
-
             });
         });
     </script>
