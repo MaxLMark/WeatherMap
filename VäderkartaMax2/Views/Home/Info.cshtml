@@ -4,15 +4,23 @@
     <meta name="viewport" content="width=device-width" />
     <title>Info</title>
 </head>
-<body style="background-color:cadetblue">
+<body style="background-color:white">
+    <div class="col-sm-8 text-left container" style="background-color:antiquewhite">
     <h1 class="page-header" id="Country">@ViewBag.Country</h1>
     <p id="Capital">Capital: </p>
     <p id="Info">Info: </p>
     <p>Flag: <div id="icon" style="width:300px; height:250px;"><img style="width:300px; height:250px;" id="flag" src="" alt="flag icon"></div> </p>
-    <img id="wIcon" src="" alt="weather icon" />
+    </div>
+    <div class="col-sm-2">
+    <img id="wIcon" style="float:left" src="" alt="weather icon" />
     <p id="cWeather"> Current weather: </p>
-    <p>5day forecast: </p>
-    <div id="testWeather"></div>
+    <h3>5 day weather forecast </h3>
+    <table>
+        <tbody id="testWeather">
+
+        </tbody>
+    </table>
+    </div>
 </body>
 
 @section Scripts {
@@ -62,7 +70,7 @@
                     console.log(svar);
 
                 }).then(function (svar) {
-                    var testdt = new Date('2018-08-10 12:00:00');
+                    //var testdt = new Date('2018-08-10 12:00:00');
                     $.each(svar.list, function (index, value) {
                         //console.log('My array has at position ' + index + ', this value: ' + value.dt_txt);
                         var dt = new Date(value.dt_txt);
@@ -73,12 +81,19 @@
 
                         var iconurl = "http://openweathermap.org/img/w/" + iconcode + ".png";
 
-                        console.log(iconcode);
+                        //console.log(iconcode);
 
 
                         if (dt.getHours() == 12) {
-                            $('#testWeather').append('<p> Temperature: ' + value.main.temp + '°C</p>');
-                            $('#testWeather').append('<img src="'+ iconurl + '" alt="weather icon" />')
+                            //console.log(value);
+                            var windDeg = parseInt(value.wind.deg);
+                            var windDir = calculateWindDir(windDeg);
+                            //console.log(windi)
+                            //$('#testWeather').append('<tr id="testii"></tr>');
+                            $('#testWeather').append('<tr><td><img src="' + iconurl + '" alt="weather icon" />Temperature: '
+                                + value.main.temp + '°C </br> Humidity: '+ value.main.humidity +'%</td> <td> Wind direction: '
+                                + windDir + '</br> Speed: ' + value.wind.speed + ' m/s</td> </tr>');
+                            //$('#testii').append('<img src="'+ iconurl + '" alt="weather icon" />')
 
                         }
                         //$('#testWeather').append('<p> Weather: ' + value.weather.description + '</p>');
@@ -93,6 +108,28 @@
             });
             //console.log("the country is: ", country);
         });
+
+        function calculateWindDir(windDir) {
+            if (windDir > 337) {
+                return "North"
+            } else if (windDir > 23 && windDir <= 68 ) {
+                return "North East"
+            } else if (windDir > 68 && windDir <= 113) {
+                return "East"
+            } else if (windDir > 113 && windDir <= 158) {
+                return "South East"
+            } else if (windDir > 158 && windDir <= 203) {
+                return "South"
+            } else if (windDir > 203 && windDir <= 248) {
+                return "South West"
+            } else if (windDir > 248 && windDir <= 293) {
+                return "West"
+            } else if (windDir > 293 && windDir <= 337) {
+                return "North West"
+            } else if (windDir <= 23) {
+                return "North"
+            }
+        }
 
     </script>
 }
