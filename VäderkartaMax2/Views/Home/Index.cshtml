@@ -51,9 +51,9 @@
                     $('.modal-body').empty();
                     //$('.modal-body').append('<p> Country: ' + name + '</p>')
                     $('#exampleModalLabel').text(name);
-                    $('#countrySubmit').val(name);
                     $.getJSON('https://restcountries.eu/rest/v2/alpha/' + code, function (data) {
                         //console.log(data);
+                    $('#countrySubmit').val(data.name);
                         $('.modal-body').append('<p id="capital"> Capital: ' + data.capital + '</p>')
                     }).then(function (data) {
 

@@ -5,14 +5,14 @@
     <title>Info</title>
 </head>
 <body style="background-color:cadetblue">
-    <h1 id="Country">@ViewBag.Country</h1>
+    <h1 class="page-header" id="Country">@ViewBag.Country</h1>
     <p id="Capital">Capital: </p>
     <p id="Info">Info: </p>
     <p>Flag: <div id="icon" style="width:300px; height:250px;"><img style="width:300px; height:250px;" id="flag" src="" alt="flag icon"></div> </p>
     <img id="wIcon" src="" alt="weather icon" />
-    <p id="cWeather"> Current weather: </p> 
+    <p id="cWeather"> Current weather: </p>
     <p>5day forecast: </p>
-    <div id="test"></div>
+    <div id="testWeather"></div>
 </body>
 
 @section Scripts {
@@ -30,9 +30,7 @@
 
             var apixuApiKey = '01b71d91de8046a597d123250180808';
 
-            $.getJSON('https://restcountries.eu/rest/v2/name/' + country + '?fullText=true', function (data) {
-
-
+            $.getJSON('https://restcountries.eu/rest/v2/name/' + country , function (data) {
 
                 capital = data["0"].capital;
                 $('#Capital').text("Capital: " + capital);
@@ -41,12 +39,6 @@
 
                 $('#flag').attr('src', flagUrl);
 
-
-
-
-
-
-
                 console.log(data, capital);
             }).then(function (data) {
 
@@ -54,7 +46,6 @@
 
                     //console.log(response);
                     $('#Info').text(response.extract);
-
 
                 });
 
@@ -70,15 +61,32 @@
                 $.getJSON('https://api.openweathermap.org/data/2.5/forecast?q=' + capital + '&units=metric&APPID=' + apiKey, function (svar) {
                     console.log(svar);
 
+                }).then(function (svar) {
+                    var testdt = new Date('2018-08-10 12:00:00');
+                    $.each(svar.list, function (index, value) {
+                        //console.log('My array has at position ' + index + ', this value: ' + value.dt_txt);
+                        var dt = new Date(value.dt_txt);
 
-                   
+                        //console.log("this is testdt: " + testdt.getHours() + " this is dt: " + dt.getHours());
 
-                });
+                        var iconcode = value.weather["0"].icon
+
+                        var iconurl = "http://openweathermap.org/img/w/" + iconcode + ".png";
+
+                        console.log(iconcode);
 
 
+                        if (dt.getHours() == 12) {
+                            $('#testWeather').append('<p> Temperature: ' + value.main.temp + '°C</p>');
+                            $('#testWeather').append('<img src="'+ iconurl + '" alt="weather icon" />')
+
+                        }
+                        //$('#testWeather').append('<p> Weather: ' + value.weather.description + '</p>');
 
 
+                    });
 
+                    });
 
 
 
