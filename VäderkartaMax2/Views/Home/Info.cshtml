@@ -3,24 +3,27 @@
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>Info</title>
+    <link href="style.css" rel="stylesheet">
 </head>
-<body style="background-color:white">
-    <div class="col-sm-8 text-left container" style="background-color:antiquewhite">
-    <h1 class="page-header" id="Country">@ViewBag.Country</h1>
-    <p id="Capital">Capital: </p>
-    <p id="Info">Info: </p>
-    <p>Flag: <div id="icon" style="width:300px; height:250px;"><img style="width:300px; height:250px;" id="flag" src="" alt="flag icon"></div> </p>
+<body>
+    <div class="col-sm-8 text-left container">
+        <h1 class="page-header" id="Country">@ViewBag.Country</h1>
+        <p id="Capital">Capital: </p>
+        <p id="Info">Info: </p>
+        <p>Flag: <div id="icon" style="width:300px; height:250px;"><img style="width:300px; height:250px;" id="flag" src="" alt="flag icon"></div> </p>
     </div>
     <div class="col-sm-2">
-    <img id="wIcon" style="float:left" src="" alt="weather icon" />
-    <p id="cWeather"> Current weather: </p>
-    <h3>5 day weather forecast </h3>
-    <table>
-        <tbody id="testWeather">
+        <img id="wIcon" style="float:left" src="" alt="weather icon" />
 
-        </tbody>
-    </table>
+        <p id="cWeather"> Current weather: </p>
+
     </div>
+    <h3>5 day weather forecast </h3>
+
+    <table>
+        <tbody id="testWeather"></tbody>
+    </table>
+
 </body>
 
 @section Scripts {
