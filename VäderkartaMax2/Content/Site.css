@@ -1666,15 +1666,17 @@ form textarea {
     }
 
 .forecast-container {
-    width: 100%;
+    /*width: 100%;*/
     background: #323544;
     display: table;
     table-layout: fixed;
-    width: 100%;
+    /*width: 100%;*/
+    float: right;
     overflow: hidden;
     border-radius: 10px;
-    margin-top: -150px;
+    /*margin-top: -150px;*/
     margin-bottom: 50px;
+    padding-bottom:5px;
 }
 
     .forecast-container .forecast {
@@ -2309,3 +2311,18 @@ form textarea {
             background: #009ad8;
             color: white;
         }
+
+.temp {
+    color: white;
+    font-weight: bold;
+    padding-left:10px
+}
+
+.fDate {
+    float: right;
+    padding-right:10px;
+}
+
+#testWeather tr:nth-child(even) {
+    background-color: #262936;
+}

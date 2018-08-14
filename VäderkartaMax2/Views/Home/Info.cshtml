@@ -3,26 +3,56 @@
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>Info</title>
-    <link href="style.css" rel="stylesheet">
+    @*<link href="style.css" rel="stylesheet">*@
 </head>
 <body>
-    <div class="col-sm-8 text-left container">
-        <h1 class="page-header" id="Country">@ViewBag.Country</h1>
-        <p id="Capital">Capital: </p>
-        <p id="Info">Info: </p>
-        <p>Flag: <div id="icon" style="width:300px; height:250px;"><img style="width:300px; height:250px;" id="flag" src="" alt="flag icon"></div> </p>
+    <div class="col-sm-10 text-left container">
+        <h1 style="margin-left:15%; text-align:center;" class="page-header" id="Country">@ViewBag.Country</h1>
+        <p style="margin-left:15%" id="Capital">Capital: </p>
+        <p style="margin-left:15%" id="Info">Info: </p>
+        <p style="margin-left:15%">Flag: </p>
+        <div id="icon" style="width:100%;">
+            <img style="height:250px; margin-left:15%;" id="flag" src="" alt="flag icon">
+
+
+
+
+            <div class="forecast-container">
+
+                <div class="today forecast">
+                    <div class="forecast-header">
+                        <div class="day">Today</div>
+                        <div class="date" id="todaysDate"></div>
+                    </div> <!-- .forecast-header -->
+                    <div class="forecast-content" id="todaysForecast">
+                        <div class="location" id="todaysWeather"></div>
+                        <div class="degree">
+                            <div class="num"></div>
+                            <div class="forecast-icon" style="width:120px; height:150px">
+                                @*<img src="images/icons/icon-1.svg" alt="" width="90">*@
+                                <img id="wIcon" style="" src="" alt="weather icon" width="150" />
+                            </div>
+                        </div>
+
+                        @*<p id="cWeather"> Current weather: </p>*@
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+        @Html.ActionLink("Back", "Index", "Home", null, new { @class = "btn btn-danger" , @style = "margin-left:15%; margin-top:25px" })
+
     </div>
-    <div class="col-sm-2">
-        <img id="wIcon" style="float:left" src="" alt="weather icon" />
+    <div class="col-sm-2 " style="background: #323544; padding: 20px; border-radius: 10px; margin-top: 10px; padding-left:0px; padding-right:0px">
+        <h3 style="margin-top: 25px; text-align: center;">5 day weather forecast </h3>
 
-        <p id="cWeather"> Current weather: </p>
-
-    </div>
-    <h3>5 day weather forecast </h3>
-
-    <table>
+        <table>
+    @*<thead style="margin-top:25px">5 day weather forecast</thead>*@
         <tbody id="testWeather"></tbody>
-    </table>
+        </table>
+    </div>
 
 </body>
 
@@ -50,7 +80,7 @@
 
                 $('#flag').attr('src', flagUrl);
 
-                console.log(data, capital);
+                //console.log(data, capital);
             }).then(function (data) {
 
                 $.getJSON('https://en.wikipedia.org/api/rest_v1/page/summary/' + capital, function (response) {
@@ -64,13 +94,31 @@
                     //console.log(response);
                     var iconcode = test.list["0"].weather["0"].icon;
                     var iconurl = "http://openweathermap.org/img/w/" + iconcode + ".png";
+                    var windDeg = parseInt(test.list["0"].wind.deg);
+                    var windDir = calculateWindDir(windDeg);
+                    console.log(test);
+                    var unix_timestamp = test.list["0"].dt
+
+                    var date = new Date(unix_timestamp * 1000);
+                    var options = { day: 'numeric', month: 'short' };
+
+                    //console.log(date.toLocaleDateString('en-GB', options));
+
+                    $('#todaysDate').text(date.toLocaleDateString('en-GB', options))
+
                     $('#wIcon').attr('src', iconurl);
                     $('#cWeather').text("Current weather: " + test.list["0"].weather["0"].main + " and temperature: " + test.list["0"].main.temp + "°C");
+                    $('#todaysWeather').text(test.list["0"].weather["0"].main)
+                    $('.num').text(parseInt(test.list["0"].main.temp) + "°C")
+                    $('#todaysForecast').append('<span><img src="/Content/images/icon-umberella@2x.png" alt="" width="21" height="21">' + test.list["0"].main.humidity
+                        + '%</span> <span><img src="/Content/images/icon-wind@2x.png" alt="" width="23" height="21">' + test.list["0"].wind.speed
+                        + 'm/s</span> <span><img src="/Content/images/icon-compass@2x.png" alt="" width="22" height="22">' + windDir + '</span>')
+
 
                 });
 
                 $.getJSON('https://api.openweathermap.org/data/2.5/forecast?q=' + capital + '&units=metric&APPID=' + apiKey, function (svar) {
-                    console.log(svar);
+                    //console.log(svar);
 
                 }).then(function (svar) {
                     //var testdt = new Date('2018-08-10 12:00:00');
@@ -88,14 +136,19 @@
 
 
                         if (dt.getHours() == 12) {
-                            //console.log(value);
+                            console.log(value);
                             var windDeg = parseInt(value.wind.deg);
                             var windDir = calculateWindDir(windDeg);
+
+                            var unix_timestamp = value.dt;
+                            var date = new Date(unix_timestamp * 1000);
+                            var options = { day: 'numeric', month: 'short' };
                             //console.log(windi)
                             //$('#testWeather').append('<tr id="testii"></tr>');
-                            $('#testWeather').append('<tr><td><img src="' + iconurl + '" alt="weather icon" />Temperature: '
-                                + value.main.temp + '°C </br> Humidity: '+ value.main.humidity +'%</td> <td> Wind direction: '
-                                + windDir + '</br> Speed: ' + value.wind.speed + ' m/s</td> </tr>');
+                            $('#testWeather').append('<tr><td><span class="temp">'
+                                + parseInt(value.main.temp) + '°C</span> <img src="' + iconurl + '" alt="weather icon" /><span class="fDate">' + date.toLocaleDateString('en-GB', options) +'</span></br> <img style="margin-left:10px;" src="/Content/images/icon-umberella@2x.png" alt="" width="21" height="21"> '
+                                + value.main.humidity + '%  <img src="/Content/images/icon-compass@2x.png" alt="" width="22" height="22"> '
+                                + windDir + ' <img src="/Content/images/icon-wind@2x.png" alt="" width="23" height="21"> ' + value.wind.speed + ' m/s</td> </tr>');
                             //$('#testii').append('<img src="'+ iconurl + '" alt="weather icon" />')
 
                         }
@@ -116,23 +169,24 @@
             if (windDir > 337) {
                 return "North"
             } else if (windDir > 23 && windDir <= 68 ) {
-                return "North East"
+                return "NE"
             } else if (windDir > 68 && windDir <= 113) {
                 return "East"
             } else if (windDir > 113 && windDir <= 158) {
-                return "South East"
+                return "SE"
             } else if (windDir > 158 && windDir <= 203) {
                 return "South"
             } else if (windDir > 203 && windDir <= 248) {
-                return "South West"
+                return "SW"
             } else if (windDir > 248 && windDir <= 293) {
                 return "West"
             } else if (windDir > 293 && windDir <= 337) {
-                return "North West"
+                return "NW"
             } else if (windDir <= 23) {
                 return "North"
             }
         }
+
 
     </script>
 }

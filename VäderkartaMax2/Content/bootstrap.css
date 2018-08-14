@@ -185,7 +185,8 @@ table {
 }
 td,
 th {
-  padding: 0;
+  padding-bottom: 20px;
+  width: 300px;
 }
 /*! Source: https://github.com/h5bp/html5-boilerplate/blob/master/src/css/main.css */
 @media print {
@@ -5905,6 +5906,7 @@ button.close {
 .modal-content {
   position: relative;
   background-color: #fff;
+  color:black;
   -webkit-background-clip: padding-box;
           background-clip: padding-box;
   border: 1px solid #999;
