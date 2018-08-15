@@ -4,21 +4,37 @@
     <meta name="viewport" content="width=device-width" />
     <title>Info</title>
     @*<link href="style.css" rel="stylesheet">*@
+    <style>
+        p {
+            margin-left: 15%;
+        }
+
+        h1 {
+            margin-left: 15%;
+        }
+
+        #dropDownCities {
+            margin-left: 15%;
+            max-width: 150px;
+            color: black;
+        }
+    </style>
 </head>
 <body>
+    <h1 style=" text-align:center;" class="page-header" id="js-country"></h1>
     <div class="col-sm-10 text-left container">
-        <h1 style="margin-left:15%; text-align:center;" class="page-header" id="Country">@ViewBag.Country</h1>
-        <p style="margin-left:15%" id="Capital">Capital: </p>
-        <p style="margin-left:15%" id="Info">Info: </p>
-        <p style="margin-left:15%">Flag: </p>
+        <p id="js-nativeName"></p>
+        <p id="js-currency"></p>
+        <p id="js-subRegion"></p>
+        <p id="js-apital">Capital: </p>
+        <p id="js-info">Info: </p>
+        <p>Flag: </p>
         <div id="icon" style="width:100%;">
-            <img style="height:250px; margin-left:15%;" id="flag" src="" alt="flag icon">
-
+            <img id="flag" src="" alt="flag icon">
 
 
 
             <div class="forecast-container">
-
                 <div class="today forecast">
                     <div class="forecast-header">
                         <div class="day">Today</div>
@@ -33,27 +49,45 @@
                                 <img id="wIcon" style="" src="" alt="weather icon" width="150" />
                             </div>
                         </div>
-
                         @*<p id="cWeather"> Current weather: </p>*@
-
                     </div>
-
                 </div>
-
             </div>
+
+
+
+            <form action="Info" method="POST">
+                <div id="js-borderingCountries">
+                    <h1>Bordering countries: </h1>
+                </div>
+            </form>
+            <form action="Info" method="POST">
+
+                <div id="js-selectCity">
+                    <h1>Select another city: </h1>
+                    <select name="selectedCity" id="dropDownCities" onchange="this.form.submit()">
+                        <option value="None" selected="Selected"></option>
+                    </select>
+                </div>
+            </form>
         </div>
-        @Html.ActionLink("Back", "Index", "Home", null, new { @class = "btn btn-danger" , @style = "margin-left:15%; margin-top:25px" })
+
+
 
     </div>
-    <div class="col-sm-2 " style="background: #323544; padding: 20px; border-radius: 10px; margin-top: 10px; padding-left:0px; padding-right:0px">
+    <div class="col-sm-2 " style="background: #323544; padding: 20px; border-radius: 10px; padding-left:0px; padding-right:0px">
         <h3 style="margin-top: 25px; text-align: center;">5 day weather forecast </h3>
 
         <table>
-    @*<thead style="margin-top:25px">5 day weather forecast</thead>*@
-        <tbody id="testWeather"></tbody>
+            @*<thead style="margin-top:25px">5 day weather forecast</thead>*@
+            <tbody id="js-5dayForecast"></tbody>
         </table>
     </div>
 
+    <footer>
+
+        @Html.ActionLink("Back to map", "Index", "Home", null, new { @class = "btn btn-danger", @style = "left: 0; bottom: 0; width: 100%; text-align: center;" })
+    </footer>
 </body>
 
 @section Scripts {
@@ -63,30 +97,177 @@
 
         $(function () {
 
-            var country = '@(ViewBag.Country)';
-            var apiKey = 'fe34f1dcaebdaf3204c2e53a4c865fb6'
             var capital = "";
-
+            var country = '@(ViewBag.Country)';
+            var apiKey = 'fe34f1dcaebdaf3204c2e53a4c865fb6';
             var weatherbitApiKey = '2035d3aefc17412891b68c1330c6bbb5';
-
             var apixuApiKey = '01b71d91de8046a597d123250180808';
 
-            $.getJSON('https://restcountries.eu/rest/v2/name/' + country , function (data) {
+            if (country === "") {
+                $.getJSON('https://restcountries.eu/rest/v2/capital/' + '@(ViewBag.Capital)', function (data) {
 
-                capital = data["0"].capital;
-                $('#Capital').text("Capital: " + capital);
 
-                var flagUrl = data["0"].flag
+                    console.log(data);
+
+                    capital = data["0"].capital;
+                    currency = data["0"].currencies["0"].name;
+                    nativeName = data["0"].nativeName;
+                    $('#js-country').text(data["0"].name);
+                    $('#js-nativeName').text("Native name: " + nativeName);
+                    $('#js-capital').text("Capital: " + capital);
+                    $('#js-currency').text("Currency: " + currency);
+                    $('#js-subRegion').text("Subregion: " + data.subregion);
+                    var flagUrl = data["0"].flag;
+
+                    $('#flag').attr('src', flagUrl);
+
+
+
+                    country = data["0"].name;
+                }).then(function (data) {
+
+                    $.each(data["0"].borders, function (index, value) {
+                        $.getJSON('https://restcountries.eu/rest/v2/alpha/' + value, function (response) {
+
+                            $('#js-borderingCountries').append('<button type="submit" id="countrySubmit" name="submitCountry" value="' + value + '" class="btn btn-primary">' + response.name + '</button>');
+
+                        });
+
+                    });
+                    //$.each(data["0"].borders)
+                    $.getJSON('https://en.wikipedia.org/api/rest_v1/page/summary/' + capital, function (response) {
+
+                        //console.log(response);
+                        $('#js-info').text(response.extract);
+
+                    });
+
+                    $.getJSON('https://api.openweathermap.org/data/2.5/find?q=' + capital + '&units=metric&APPID=' + apiKey, function (test) {
+                        //console.log(response);
+                        var iconcode = test.list["0"].weather["0"].icon;
+                        var iconurl = "http://openweathermap.org/img/w/" + iconcode + ".png";
+                        var windDeg = parseInt(test.list["0"].wind.deg);
+                        var windDir = calculateWindDir(windDeg);
+                        console.log(test);
+                        var unix_timestamp = test.list["0"].dt;
+
+                        var date = new Date(unix_timestamp * 1000);
+                        var options = { day: 'numeric', month: 'short' };
+
+                        //console.log(date.toLocaleDateString('en-GB', options));
+
+                        $('#todaysDate').text(date.toLocaleDateString('en-GB', options));
+
+                        $('#wIcon').attr('src', iconurl);
+                        $('#cWeather').text("Current weather: " + test.list["0"].weather["0"].main + " and temperature: " + test.list["0"].main.temp + "°C");
+                        $('#todaysWeather').text(test.list["0"].weather["0"].main);
+                        $('.num').text(parseInt(test.list["0"].main.temp) + "°C");
+                        $('#todaysForecast').append('<span><img src="/Content/images/icon-umberella@2x.png" alt="" width="21" height="21">' + test.list["0"].main.humidity
+                            + '%</span> <span><img src="/Content/images/icon-wind@2x.png" alt="" width="23" height="21">' + test.list["0"].wind.speed
+                            + 'm/s</span> <span><img src="/Content/images/icon-compass@2x.png" alt="" width="22" height="22">' + windDir + '</span>');
+
+
+                    });
+
+                    $.getJSON('https://api.openweathermap.org/data/2.5/forecast?q=' + capital + '&units=metric&APPID=' + apiKey, function (svar) {
+                        //console.log(svar);
+
+                    }).then(function (svar) {
+                        //var testdt = new Date('2018-08-10 12:00:00');
+                        populateDropdown();
+
+                        $.each(svar.list, function (index, value) {
+                            //console.log('My array has at position ' + index + ', this value: ' + value.dt_txt);
+                            var dt = new Date(value.dt_txt);
+
+                            //console.log("this is testdt: " + testdt.getHours() + " this is dt: " + dt.getHours());
+
+                            var iconcode = value.weather["0"].icon;
+
+                            var iconurl = "http://openweathermap.org/img/w/" + iconcode + ".png";
+
+                            //console.log(iconcode);
+
+
+                            if (dt.getHours() === 12) {
+                                //console.log(value);
+                                var windDeg = parseInt(value.wind.deg);
+                                var windDir = calculateWindDir(windDeg);
+
+                                var unix_timestamp = value.dt;
+                                var date = new Date(unix_timestamp * 1000);
+                                var options = { day: 'numeric', month: 'short' };
+                                //console.log(windi)
+                                //$('#testWeather').append('<tr id="testii"></tr>');
+                                $('#js-5dayForecast').append('<tr><td><span class="temp">'
+                                    + parseInt(value.main.temp) + '°C</span> <img src="' + iconurl + '" alt="weather icon" /><span class="fDate">' + date.toLocaleDateString('en-GB', options) + '</span></br> <img style="margin-left:10px;" src="/Content/images/icon-umberella@2x.png" alt="" width="21" height="21"> '
+                                    + value.main.humidity + '%  <img src="/Content/images/icon-compass@2x.png" alt="" width="22" height="22"> '
+                                    + windDir + ' <img src="/Content/images/icon-wind@2x.png" alt="" width="23" height="21"> ' + value.wind.speed + ' m/s</td> </tr>');
+                                //$('#testii').append('<img src="'+ iconurl + '" alt="weather icon" />')
+
+                            }
+                            //$('#testWeather').append('<p> Weather: ' + value.weather.description + '</p>');
+
+                        });
+
+                    });
+
+
+
+                    $('#dropDownCities').change(function () {
+                        var selectedCity = $(this).val();
+
+                        console.log(selectedCity);
+
+                        @* $.ajax({
+                            type: "POST",
+                            url: '@Url.Action("Info")',
+                            data: { data: selectedCity },
+                            success: function () {
+                                console.log("funkarrrr");
+                                $.getScript(document.currentScript);
+                            }
+                        });*@
+                        });
+
+                });
+            } else if (country !== "") {
+
+            $.getJSON('https://restcountries.eu/rest/v2/alpha/' + country , function (data) {
+                //console.log(data);
+
+                @*if (data === undefined) {
+                    data = getJSON('https://restcountries.eu/rest/v2/capital/' + '@(ViewBag.Capital)');
+                    console.log(data);
+                }*@
+                capital = data.capital;
+                currency = data.currencies["0"].name;
+                nativeName = data.nativeName;
+                $('#js-country').text(data.name);
+                $('#js-nativeName').text("Native name: " + nativeName);
+                $('#js-capital').text("Capital: " + capital);
+                $('#js-currency').text("Currency: " + currency);
+                $('#js-subRegion').text("Subregion: " + data.subregion);
+                var flagUrl = data.flag;
 
                 $('#flag').attr('src', flagUrl);
 
-                //console.log(data, capital);
+                console.log(data, capital);
             }).then(function (data) {
 
+                $.each(data.borders, function (index, value) {
+                    $.getJSON('https://restcountries.eu/rest/v2/alpha/' + value, function (response) {
+
+                    $('#js-borderingCountries').append('<button type="submit" id="countrySubmit" name="submitCountry" value="' + value + '" class="btn btn-primary">' + response.name + '</button>');
+
+                    });
+
+                });
+                //$.each(data["0"].borders)
                 $.getJSON('https://en.wikipedia.org/api/rest_v1/page/summary/' + capital, function (response) {
 
                     //console.log(response);
-                    $('#Info').text(response.extract);
+                    $('#js-info').text(response.extract);
 
                 });
 
@@ -97,22 +278,22 @@
                     var windDeg = parseInt(test.list["0"].wind.deg);
                     var windDir = calculateWindDir(windDeg);
                     console.log(test);
-                    var unix_timestamp = test.list["0"].dt
+                    var unix_timestamp = test.list["0"].dt;
 
                     var date = new Date(unix_timestamp * 1000);
                     var options = { day: 'numeric', month: 'short' };
 
                     //console.log(date.toLocaleDateString('en-GB', options));
 
-                    $('#todaysDate').text(date.toLocaleDateString('en-GB', options))
+                    $('#todaysDate').text(date.toLocaleDateString('en-GB', options));
 
                     $('#wIcon').attr('src', iconurl);
                     $('#cWeather').text("Current weather: " + test.list["0"].weather["0"].main + " and temperature: " + test.list["0"].main.temp + "°C");
-                    $('#todaysWeather').text(test.list["0"].weather["0"].main)
-                    $('.num').text(parseInt(test.list["0"].main.temp) + "°C")
+                    $('#todaysWeather').text(test.list["0"].weather["0"].main);
+                    $('.num').text(parseInt(test.list["0"].main.temp) + "°C");
                     $('#todaysForecast').append('<span><img src="/Content/images/icon-umberella@2x.png" alt="" width="21" height="21">' + test.list["0"].main.humidity
                         + '%</span> <span><img src="/Content/images/icon-wind@2x.png" alt="" width="23" height="21">' + test.list["0"].wind.speed
-                        + 'm/s</span> <span><img src="/Content/images/icon-compass@2x.png" alt="" width="22" height="22">' + windDir + '</span>')
+                        + 'm/s</span> <span><img src="/Content/images/icon-compass@2x.png" alt="" width="22" height="22">' + windDir + '</span>');
 
 
                 });
@@ -122,21 +303,23 @@
 
                 }).then(function (svar) {
                     //var testdt = new Date('2018-08-10 12:00:00');
+                    populateDropdown();
+
                     $.each(svar.list, function (index, value) {
                         //console.log('My array has at position ' + index + ', this value: ' + value.dt_txt);
                         var dt = new Date(value.dt_txt);
 
                         //console.log("this is testdt: " + testdt.getHours() + " this is dt: " + dt.getHours());
 
-                        var iconcode = value.weather["0"].icon
+                        var iconcode = value.weather["0"].icon;
 
                         var iconurl = "http://openweathermap.org/img/w/" + iconcode + ".png";
 
                         //console.log(iconcode);
 
 
-                        if (dt.getHours() == 12) {
-                            console.log(value);
+                        if (dt.getHours() === 12) {
+                            //console.log(value);
                             var windDeg = parseInt(value.wind.deg);
                             var windDir = calculateWindDir(windDeg);
 
@@ -145,7 +328,7 @@
                             var options = { day: 'numeric', month: 'short' };
                             //console.log(windi)
                             //$('#testWeather').append('<tr id="testii"></tr>');
-                            $('#testWeather').append('<tr><td><span class="temp">'
+                            $('#js-5dayForecast').append('<tr><td><span class="temp">'
                                 + parseInt(value.main.temp) + '°C</span> <img src="' + iconurl + '" alt="weather icon" /><span class="fDate">' + date.toLocaleDateString('en-GB', options) +'</span></br> <img style="margin-left:10px;" src="/Content/images/icon-umberella@2x.png" alt="" width="21" height="21"> '
                                 + value.main.humidity + '%  <img src="/Content/images/icon-compass@2x.png" alt="" width="22" height="22"> '
                                 + windDir + ' <img src="/Content/images/icon-wind@2x.png" alt="" width="23" height="21"> ' + value.wind.speed + ' m/s</td> </tr>');
@@ -154,36 +337,65 @@
                         }
                         //$('#testWeather').append('<p> Weather: ' + value.weather.description + '</p>');
 
-
                     });
 
-                    });
+                });
 
 
 
-            });
+                        $('#dropDownCities').change(function () {
+                            var selectedCity = $(this).val();
+
+                            console.log(selectedCity);
+
+                            @*$.ajax({
+                                type: "POST",
+                                url: '@Url.Action("Info")',
+                                data: { data: selectedCity },
+                                success: function () {
+                                    console.log("funkarrrr");
+                                    $.getScript(document.currentScript);
+                                }
+                            });*@
+                        });
+
+                   });
             //console.log("the country is: ", country);
+            }
         });
+
+        function populateDropdown() {
+            $.getJSON('https://restcountries.eu/rest/v2/all', function (response) {
+
+                //console.log("allcountries", response);
+                //console.log(response);
+                $.each(response, function (key, value) {
+
+                    $("#dropDownCities").append("<option>" + value.capital + "</option>");
+                });
+            });
+        }
+
 
         function calculateWindDir(windDir) {
             if (windDir > 337) {
-                return "North"
+                return "North";
             } else if (windDir > 23 && windDir <= 68 ) {
-                return "NE"
+                return "NE";
             } else if (windDir > 68 && windDir <= 113) {
-                return "East"
+                return "East";
             } else if (windDir > 113 && windDir <= 158) {
-                return "SE"
+                return "SE";
             } else if (windDir > 158 && windDir <= 203) {
-                return "South"
+                return "South";
             } else if (windDir > 203 && windDir <= 248) {
-                return "SW"
+                return "SW";
             } else if (windDir > 248 && windDir <= 293) {
-                return "West"
+                return "West";
             } else if (windDir > 293 && windDir <= 337) {
-                return "NW"
+                return "NW";
             } else if (windDir <= 23) {
-                return "North"
+                return "North";
             }
         }
 

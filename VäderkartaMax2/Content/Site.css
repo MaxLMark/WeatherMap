@@ -303,16 +303,16 @@ p {
 }
 
 form input, form textarea, form select {
-    outline: none;
+    /*outline: none;
     border: none;
     padding: 10px;
-    border-radius: 30px;
+    border-radius: 30px;*/
 }
 
 form select {
     -webkit-appearance: none;
     -moz-appearance: none;
-    appearance: none;
+    /*appearance: none;*/
 }
 
 form textarea {
@@ -2323,6 +2323,27 @@ form textarea {
     padding-right:10px;
 }
 
-#testWeather tr:nth-child(even) {
+#js-5dayForecast tr:nth-child(even) {
     background-color: #262936;
+}
+
+#js-borderingCountries {
+    margin-left: 15%;
+    width: 600px;
+}
+
+#countrySubmit {
+    margin-left: 10px;
+    margin-bottom: 10px;
+}
+
+#flag {
+    height: 250px;
+    margin-left: 15%;
+    margin-bottom: 20px;
+}
+
+#js-selectCity {
+    margin-left: 15%;
+    width: 600px;
 }

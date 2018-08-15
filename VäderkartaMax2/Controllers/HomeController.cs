@@ -14,9 +14,10 @@ namespace VäderkartaMax2.Controllers
             return View();
         }
 
-        public ActionResult Info(string submitCountry)
+        public ActionResult Info(string submitCountry, string selectedCity)
         {
             //CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("fi");
+            ViewBag.Capital = selectedCity;
             ViewBag.Country = submitCountry;
             return View();
         }
