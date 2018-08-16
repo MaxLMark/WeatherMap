@@ -190,7 +190,7 @@ function populateDropdown() {
 
         var capitalArray = [];
         $.each(response, function (key, value) {
-            if (value.capital !== "") {
+            if (value.capital && value.capital.length) {
 
                 capitalArray.push(value.capital);
 

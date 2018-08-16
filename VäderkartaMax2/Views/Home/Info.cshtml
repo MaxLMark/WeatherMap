@@ -21,7 +21,6 @@
         <p>Flag: </p>
         <div id="icon" style="width:100%;">
             <img id="flag" src="" alt="flag icon">
-
             <div class="forecast-container">
                 <div class="today forecast">
                     <div class="forecast-header">
@@ -41,14 +40,12 @@
                     </div>
                 </div>
             </div>
-
             <form action="Info" method="POST">
                 <div id="js-borderingCountries">
                     <h1>Bordering countries: </h1>
                 </div>
             </form>
             <form action="Info" method="POST">
-
                 <div id="js-selectCity">
                     <h1>Select another capital city: </h1>
                     <select name="selectedCity" id="dropDownCities" onchange="this.form.submit()">
@@ -57,18 +54,14 @@
                 </div>
             </form>
         </div>
-
-
     </div>
     <div class="col-sm-2 " style="background: #323544; padding: 20px; border-radius: 10px; padding-left:0px; padding-right:0px">
         <h3 style="margin-top: 25px; text-align: center;">5 day weather forecast </h3>
-
         <table>
             <tbody id="js-5dayForecast"></tbody>
         </table>
     </div>
 </body>
-
 <footer>
 
     @Html.ActionLink("Back to map", "Index", "Home", null, new { @class = "btn btn-danger", @style = "left: 0; bottom: 0; width: 100%; text-align: center;" })
@@ -82,5 +75,5 @@
         var capital = '@(ViewBag.Capital)';
     </script>
     @Scripts.Render("~/Scripts/info.js")
-   
+
 }
