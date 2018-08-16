@@ -31,7 +31,7 @@
             }).then(function (data) {
 
                 $.getJSON('https://restcountries.eu/rest/v2/all', function (response) {
-
+                    $("#dropDownCountries").empty();
                     //console.log("allcountries", response);
                     //console.log(response);
                     $.each(response, function (key, value) {

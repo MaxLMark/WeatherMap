@@ -157,6 +157,7 @@
                 populateDropdown();
 
                 $.each(svar.list, function (index, value) {
+                    console.log(value.dt_txt);
                     var dt = new Date(value.dt_txt);
                     var iconcode = value.weather["0"].icon;
                     var iconurl = "http://openweathermap.org/img/w/" + iconcode + ".png";
