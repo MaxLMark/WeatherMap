@@ -2347,3 +2347,10 @@ form textarea {
     margin-left: 15%;
     width: 600px;
 }
+
+#dropDownCities {
+    margin-left: 15%;
+    max-width: 150px;
+    color: black;
+    margin-bottom: 30px;
+}
