@@ -10,13 +10,13 @@
             //console.log(code);
             //console.log(name);
             $('#exampleModal').modal('toggle');
-            $('.modal-body').empty();
+            //$('.modal-body').empty();
             //$('.modal-body').append('<p> Country: ' + name + '</p>')
             $('#exampleModalLabel').text(name);
             $.getJSON('https://restcountries.eu/rest/v2/alpha/' + code, function (data) {
                 console.log(data);
                 $('#countrySubmit').val(data.alpha3Code);
-                $('.modal-body').append('<p id="capital"> Capital: ' + data.capital + '</p>');
+                $('#js-capital').text("Capital: " + data.capital);
             }).then(function (data) {
 
                 $.getJSON('https://api.openweathermap.org/data/2.5/find?q=' + data.capital + '&units=metric&APPID=' + apiKey, function (response) {
@@ -24,8 +24,8 @@
                     var iconcode = response.list["0"].weather["0"].icon;
                     var iconurl = "http://openweathermap.org/img/w/" + iconcode + ".png";
                     $('#wicon').attr('src', iconurl);
-                    $('.modal-body').append('<p id="weather"> Weather: ' + response.list["0"].weather["0"].main + '</p>');
-                    $('.modal-body').append('<p id="temperature"> Temperature: ' + response.list["0"].main.temp + '</p>');
+                    $('#js-weather').text("Weather: " + response.list["0"].weather["0"].main);
+                    $('#js-temperature').text("Temperature: " + parseInt(response.list["0"].main.temp) + "°C");
                 });
 
             }).then(function (data) {
@@ -50,7 +50,7 @@
                             $('#countrySubmit').val(data["0"].alpha3Code);
                             console.log(data);
 
-                            $('#capital').text("Capital: " + data["0"].capital);
+                            $('#js-capital').text("Capital: " + data["0"].capital);
                         }).then(function (data) {
 
                             $.getJSON('https://api.openweathermap.org/data/2.5/find?q=' + data["0"].capital + '&units=metric&APPID=' + apiKey, function (response) {
@@ -58,8 +58,8 @@
                                 var iconcode = response.list["0"].weather["0"].icon;
                                 var iconurl = "http://openweathermap.org/img/w/" + iconcode + ".png";
                                 $('#wicon').attr('src', iconurl);
-                                $('#weather').text("Weather: " + response.list["0"].weather["0"].main);
-                                $('#temperature').text("Temperature " + response.list["0"].main.temp);
+                                $('#js-weather').text("Weather: " + response.list["0"].weather["0"].main);
+                                $('#js-temperature').text("Temperature " + parseInt(response.list["0"].main.temp) + "°C");
                             });
 
                         });

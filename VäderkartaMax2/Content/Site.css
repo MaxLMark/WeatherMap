@@ -310,8 +310,8 @@ form input, form textarea, form select {
 }
 
 form select {
-    -webkit-appearance: none;
-    -moz-appearance: none;
+    /*-webkit-appearance: none;
+    -moz-appearance: none;*/
     /*appearance: none;*/
 }
 
@@ -2352,5 +2352,9 @@ form textarea {
     margin-left: 15%;
     max-width: 150px;
     color: black;
-    margin-bottom: 30px;
+    margin-bottom: 60px;
+}
+
+.u-text-black {
+    color: #000 !important;
 }

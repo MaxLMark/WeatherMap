@@ -5,20 +5,22 @@
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
-        <div class="modal-content">
+        <div class="modal-content u-text-black">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
                 <h1 class="modal-title" id="exampleModalLabel" style="text-align:center; font-weight:bold"></h1>
             </div>
-            <div class="modal-body">
-
+            <div class="modal-body" style="text-align: center;">
+                <p id="js-capital"></p>
+                <p id="js-weather"></p>
+                <div id="icon"><img id="wicon" src="" alt="Weather icon" style="width: 80px;"></div>
+                <p id="js-temperature"></p>
             </div>
-            <div id="icon"><img id="wicon" src="" alt="Weather icon"></div>
             <div class="modal-footer">
                 <p style="float:left">Select another country: </p>
-                <select name="drop_down" id="dropDownCountries" style="float:left; margin-left:10px; max-width:100px;">
+                <select class="form-control" name="drop_down" id="dropDownCountries" style="float:left; margin-left:10px; max-width:100px;">
                     <option value="None" selected="Selected"></option>
                 </select>
                 <form action="Home/Info" method="POST">

@@ -48,7 +48,7 @@
             <form action="Info" method="POST">
                 <div id="js-selectCity">
                     <h1>Select another capital city: </h1>
-                    <select name="selectedCity" id="dropDownCities" onchange="this.form.submit()">
+                    <select class="form-control" name="selectedCity" id="dropDownCities" onchange="this.form.submit()">
                         <option value="None" selected="Selected"></option>
                     </select>
                 </div>
@@ -64,7 +64,7 @@
 </body>
 <footer>
 
-    @Html.ActionLink("Back to map", "Index", "Home", null, new { @class = "btn btn-danger", @style = "left: 0; bottom: 0; width: 100%; text-align: center;" })
+    @Html.ActionLink("Back to map", "Index", "Home", null, new { @class = "btn btn-danger", @style = "left: 0; bottom: 0; width: 100%; text-align: center; position: fixed;" })
 </footer>
 
 @section Scripts {
